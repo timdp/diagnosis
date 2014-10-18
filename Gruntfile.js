@@ -25,13 +25,13 @@ module.exports = function(grunt) {
       release: 'build/release'
     },
     copy: {
-      example_debug: {
+      examples_debug: {
         files: [{
-          cwd: 'src/example',
+          cwd: 'examples',
           src: '**',
           expand: true,
           filter: 'isFile',
-          dest: 'build/debug/example/'
+          dest: 'build/debug/examples/'
         }]
       },
       html_debug: {
@@ -106,9 +106,9 @@ module.exports = function(grunt) {
         files: ['src/js/**/*.js'],
         tasks: ['jshint:all', 'uglify:debug']
       },
-      example: {
-        files: ['src/example/**'],
-        tasks: ['copy:example_debug']
+      examples: {
+        files: ['examples/**'],
+        tasks: ['copy:examples_debug']
       }
     },
     express: {
@@ -121,9 +121,9 @@ module.exports = function(grunt) {
       }
     },
     open: {
-      example: {
+      examples: {
         path: 'http://localhost:8000/?' + encodeURIComponent(JSON.stringify({
-          tests: ['/example/feature1.js', '/example/feature2.js']
+          tests: ['/examples/feature1.js', '/examples/feature2.js']
         }))
       }
     }
@@ -140,9 +140,9 @@ module.exports = function(grunt) {
   grunt.registerTask('develop', [
     'clean:debug',
     'debug',
-    'copy:example_debug',
+    'copy:examples_debug',
     'express:develop',
-    'open:example',
+    'open:examples',
     'watch'
   ]);
 
