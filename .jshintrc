@@ -1,0 +1,29 @@
+{
+  "browser":  true,
+  "curly":    true,
+  "eqeqeq":   true,
+  "eqnull":   true,
+  "es3":      true,
+  "expr":     true,
+  "latedef":  true,
+  "onevar":   true,
+  "noarg":    true,
+  "node":     true,
+  "trailing": true,
+  "undef":    true,
+  "unused":   true,
+  "globals": {
+    "Mocha":      false,
+    "mocha":      false,
+    "chai":       false,
+    "describe":   false,
+    "it":         false,
+    "before":     false,
+    "beforeEach": false,
+    "after":      false,
+    "afterEach":  false,
+    "feature":    false,
+    "task":       false,
+    "diagnosis":  true
+  }
+}

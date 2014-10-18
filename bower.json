@@ -1,0 +1,26 @@
+{
+  "name": "diagnosis",
+  "version": "0.0.1",
+  "authors": [
+    {
+      "name": "Tim De Pauw",
+      "email": "hi@tmdpw.eu",
+      "homepage": "http://tmdpw.eu/"
+    }
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "mocha": "~1.21.5",
+    "chai": "~1.9.2",
+    "chai-as-promised": "~4.1.1",
+    "es6-promise": "~1.0.0",
+    "normalize-scss": "~3.0.1"
+  }
+}

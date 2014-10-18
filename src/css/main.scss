@@ -1,0 +1,53 @@
+@import "_variables";
+@import "_normalize";
+
+body {
+  font: {
+    family: $font-family;
+    size: $font-size;
+  }
+  background: $background-color;
+  color: $foreground-color;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1em;
+}
+
+table {
+  width: 100%;
+  border-bottom: 1px solid $border-color;
+}
+
+tr {
+  border-top: 1px solid $border-color;
+}
+
+th, td {
+  padding: 0.5em;
+  text-align: center;
+  vertical-align: middle;
+  width: 33%;
+}
+
+th {
+  background: $header-background-color;
+}
+
+tr.success td {
+  background: $success-background-color;
+}
+
+tr.failure td {
+  background: $failure-background-color;
+}
+
+tr.unknown td {
+  background: $unknown-background-color;
+}
+
+.error {
+  text-align: center;
+  padding: 1em;
+  border: 1px solid $error-border-color;
+  background: $error-background-color;
+}

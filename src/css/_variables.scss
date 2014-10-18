@@ -1,0 +1,15 @@
+$font-family: Arial, Helvetica, sans-serif;
+$font-size: 13pt;
+
+$background-color: white;
+$foreground-color: rgb(40, 40, 40);
+
+$border-color: rgb(230, 230, 230);
+
+$header-background-color: rgb(240, 240, 240);
+$success-background-color: rgb(220, 255, 220);
+$failure-background-color: rgb(255, 220, 220);
+$unknown-background-color: rgb(255, 240, 220);
+
+$error-background-color: $failure-background-color;
+$error-border-color: red;
