@@ -41,6 +41,19 @@
     return function(runner) {
       Mocha.reporters.Base.call(this, runner);
 
+      var currentContainer = null;
+      var currentRow = null;
+      var level = 0;
+      var startTime;
+
+      var reportData = [];
+
+      var reportLink = document.createElement('a');
+      reportLink.id = 'export';
+      reportLink.style.display = 'none';
+      reportLink.appendChild(document.createTextNode('Export Report'));
+      mainContainer.appendChild(reportLink);
+
       var createHeader = function(title, level) {
         var el = document.createElement('h' + level);
         el.appendChild(document.createTextNode(title));
@@ -66,11 +79,6 @@
         return table;
       };
 
-      var currentContainer = null;
-      var currentRow = null;
-      var level = 0;
-      var startTime;
-
       runner.on('suite', function(suite) {
         if (suite.root) {
           return;
@@ -82,6 +90,10 @@
 
       runner.on('suite end', function(suite) {
         if (suite.root) {
+          var b64data = btoa(JSON.stringify(reportData));
+          reportLink.href = 'data:application/json;base64,' + b64data;
+          reportLink.target = '_blank';
+          reportLink.style.display = 'block';
           return;
         }
         currentContainer = null;
@@ -122,6 +134,7 @@
           result = 'Failed';
           cl = 'failure';
         }
+        reportData.push([test.title, result, ms]);
         currentRow.className = cl;
         var cells = currentRow.childNodes;
         cells[1].appendChild(document.createTextNode(result));
