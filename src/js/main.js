@@ -90,7 +90,7 @@
 
       runner.on('suite end', function(suite) {
         if (suite.root) {
-          var b64data = btoa(JSON.stringify(reportData));
+          var b64data = btoa(JSON.stringify(reportData, null, 2));
           reportLink.href = 'data:application/json;base64,' + b64data;
           reportLink.target = '_blank';
           reportLink.style.display = 'block';
@@ -123,7 +123,7 @@
         }
         var ms = new Date() - startTime;
         //var sec = (ms / 1000).toFixed(2);
-        var result, cl;
+        var result, cl, err;
         if (test.state === 'passed') {
           result = 'OK';
           cl = 'success';
@@ -133,8 +133,15 @@
         } else {
           result = 'Failed';
           cl = 'failure';
+          if (test.err) {
+            err = {};
+            err.message = test.err.message;
+            if (test.err.stack) {
+              err.stack = test.err.stack;
+            }
+          }
         }
-        reportData.push([test.title, result, ms]);
+        reportData.push([test.title, result, ms, err]);
         currentRow.className = cl;
         var cells = currentRow.childNodes;
         cells[1].appendChild(document.createTextNode(result));
