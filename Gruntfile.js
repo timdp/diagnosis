@@ -5,7 +5,6 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
   var jsSources = [
-    'bower_components/base64/base64.js',
     'bower_components/es6-promise/promise.js',
     'bower_components/mocha/mocha.js',
     'bower_components/chai/chai.js',

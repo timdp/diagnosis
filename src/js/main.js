@@ -58,11 +58,11 @@
       statusText.id = 'status';
       metaContainer.appendChild(statusText);
 
-      var reportLink = document.createElement('a');
-      reportLink.id = 'export';
-      reportLink.style.display = 'none';
-      reportLink.appendChild(document.createTextNode('Export Report'));
-      metaContainer.appendChild(reportLink);
+      var reportButton = document.createElement('button');
+      reportButton.id = 'export';
+      reportButton.style.display = 'none';
+      reportButton.appendChild(document.createTextNode('Export Report'));
+      metaContainer.appendChild(reportButton);
 
       var setStatus = function(text) {
         while (statusText.firstChild) {
@@ -113,10 +113,13 @@
       runner.on('suite end', function(suite) {
         if (suite.root) {
           statusText.style.display = 'none';
-          var b64data = btoa(JSON.stringify(reportData, null, 2));
-          reportLink.href = 'data:application/octet-stream;base64,' + b64data;
-          reportLink.target = '_blank';
-          reportLink.style.display = 'block';
+          var json = JSON.stringify(reportData, null, 2);
+          reportButton.onclick = function() {
+            var win = window.open('about:blank', '_blank', '');
+            win.document.write(json);
+            win.document.close();
+          };
+          reportButton.style.display = 'block';
           return;
         }
         currentContainer = null;
