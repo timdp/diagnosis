@@ -55,6 +55,11 @@
       mainContainer.appendChild(reportLink);
 
       var createHeader = function(title, level) {
+        var prefix = '';
+        for (var i = 0; i < level; ++i) {
+          prefix += '#';
+        }
+        reportData.push([prefix + ' ' + title]);
         var el = document.createElement('h' + level);
         el.appendChild(document.createTextNode(title));
         return el;
@@ -123,16 +128,18 @@
         }
         var ms = new Date() - startTime;
         //var sec = (ms / 1000).toFixed(2);
-        var result, cl, err;
+        var result, cl;
         if (test.state === 'passed') {
           result = 'OK';
           cl = 'success';
+          reportData.push([test.title, result, ms]);
         } else if (test.pending) {
           result = '?';
           cl = 'unknown';
         } else {
           result = 'Failed';
           cl = 'failure';
+          var err;
           if (test.err) {
             err = {};
             err.message = test.err.message;
@@ -140,8 +147,8 @@
               err.stack = test.err.stack;
             }
           }
+          reportData.push([test.title, result, ms, err]);
         }
-        reportData.push([test.title, result, ms, err]);
         currentRow.className = cl;
         var cells = currentRow.childNodes;
         cells[1].appendChild(document.createTextNode(result));
