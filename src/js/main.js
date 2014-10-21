@@ -37,6 +37,35 @@
     }, Promise.resolve());
   };
 
+  var rowToCsv = function(row) {
+    return row.map(function(obj) {
+      var str = (obj === null || typeof obj === 'undefined') ? '' :
+        (typeof obj === 'object') ? JSON.stringify(obj) :
+        '' + obj;
+      return '"' + str.replace(/"/g, '""', str) + '"';
+    }).join(',');
+  };
+
+  var toCsv = function(table) {
+    return table.map(rowToCsv).join('\n');
+  };
+
+  var toDownloadLink = function(link, filename, mimeType, data) {
+    var blob = ('Blob' in window) ? new Blob([data]) : null;
+    if ('msSaveBlob' in navigator) {
+      link.onclick = function(e) {
+        navigator.msSaveBlob(blob, filename);
+        return false;
+      };
+    } else {
+      var url = (blob && 'URL' in window) ?
+        URL.createObjectURL(blob) :
+        'data:' + mimeType + ',' + encodeURI(data);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+    }
+  };
+
   var getReporter = function() {
     return function(runner) {
       Mocha.reporters.Base.call(this, runner);
@@ -58,11 +87,11 @@
       statusText.id = 'status';
       metaContainer.appendChild(statusText);
 
-      var reportButton = document.createElement('button');
-      reportButton.id = 'export';
-      reportButton.style.display = 'none';
-      reportButton.appendChild(document.createTextNode('Export Report'));
-      metaContainer.appendChild(reportButton);
+      var reportLink = document.createElement('a');
+      reportLink.id = 'export';
+      reportLink.style.display = 'none';
+      reportLink.appendChild(document.createTextNode('Export Report'));
+      metaContainer.appendChild(reportLink);
 
       var setStatus = function(text) {
         while (statusText.firstChild) {
@@ -112,14 +141,10 @@
 
       runner.on('suite end', function(suite) {
         if (suite.root) {
+          var csv = toCsv(reportData);
+          toDownloadLink(reportLink, 'report.csv', 'text/csv', csv);
           statusText.style.display = 'none';
-          var json = JSON.stringify(reportData, null, 2);
-          reportButton.onclick = function() {
-            var win = window.open('about:blank', '_blank', '');
-            win.document.write(json);
-            win.document.close();
-          };
-          reportButton.style.display = 'block';
+          reportLink.style.display = 'block';
           return;
         }
         currentContainer = null;
