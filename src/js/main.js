@@ -41,6 +41,8 @@
     return function(runner) {
       Mocha.reporters.Base.call(this, runner);
 
+      var stats = runner.stats;
+
       var currentContainer = null;
       var currentRow = null;
       var level = 0;
@@ -48,11 +50,26 @@
 
       var reportData = [];
 
+      var metaContainer = document.createElement('div');
+      metaContainer.id = 'meta';
+      mainContainer.appendChild(metaContainer);
+
+      var statusText = document.createElement('span');
+      statusText.id = 'status';
+      metaContainer.appendChild(statusText);
+
       var reportLink = document.createElement('a');
       reportLink.id = 'export';
       reportLink.style.display = 'none';
       reportLink.appendChild(document.createTextNode('Export Report'));
-      mainContainer.appendChild(reportLink);
+      metaContainer.appendChild(reportLink);
+
+      var setStatus = function(text) {
+        while (statusText.firstChild) {
+          statusText.removeChild(statusText.firstChild);
+        }
+        statusText.appendChild(document.createTextNode(text));
+      };
 
       var createHeader = function(title, level) {
         var prefix = '';
@@ -95,8 +112,9 @@
 
       runner.on('suite end', function(suite) {
         if (suite.root) {
+          statusText.style.display = 'none';
           var b64data = btoa(JSON.stringify(reportData, null, 2));
-          reportLink.href = 'data:application/json;base64,' + b64data;
+          reportLink.href = 'data:application/octet-stream;base64,' + b64data;
           reportLink.target = '_blank';
           reportLink.style.display = 'block';
           return;
@@ -127,6 +145,7 @@
           runner.emit('test', test);
         }
         var ms = new Date() - startTime;
+        setStatus('Completed: ' + stats.tests + '/' + runner.total);
         //var sec = (ms / 1000).toFixed(2);
         var result, cl;
         if (test.state === 'passed') {
