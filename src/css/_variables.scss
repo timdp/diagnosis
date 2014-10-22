@@ -4,12 +4,14 @@ $font-size: 13pt;
 $background-color: white;
 $foreground-color: rgb(40, 40, 40);
 
+$accent-color: rgb(100, 200, 150);
+
 $border-color: rgb(230, 230, 230);
 
 $header-background-color: rgb(240, 240, 240);
-$success-background-color: rgb(220, 255, 220);
-$failure-background-color: rgb(255, 220, 220);
-$unknown-background-color: rgb(255, 240, 220);
+$succeeded-background-color: rgb(220, 255, 220);
+$failed-background-color: rgb(255, 220, 220);
+$pending-background-color: rgb(255, 240, 220);
 
-$error-background-color: $failure-background-color;
+$error-background-color: $failed-background-color;
 $error-border-color: red;

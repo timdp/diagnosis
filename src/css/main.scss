@@ -10,16 +10,42 @@ body {
   color: $foreground-color;
   max-width: 800px;
   margin: 0 auto;
-  padding: 1em;
+  padding: 2em;
 }
 
-#export {
-  cursor: pointer;
+header .title {
+  font-size: 2.5em;
+  text-transform: uppercase;
+  color: $accent-color;
+  margin-bottom: 0.67em;
 }
 
-#meta {
+.meta {
   float: right;
-  margin-top: 1.33em;
+}
+
+.export {
+  cursor: pointer;
+  display: none;
+  background: $accent-color;
+  color: $background-color;
+  font-weight: bold;
+  text-decoration: none;
+  padding: 0.33em 0.67em;
+  transition: opacity 0.2s linear;
+  border: 0;
+}
+
+.export:hover {
+  opacity: 0.8;
+}
+
+h1 {
+  margin-top: 1em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
 }
 
 table {
@@ -42,16 +68,16 @@ th {
   background: $header-background-color;
 }
 
-tr.success td {
-  background: $success-background-color;
+tr.succeeded td {
+  background: $succeeded-background-color;
 }
 
-tr.failure td {
-  background: $failure-background-color;
+tr.failed td {
+  background: $failed-background-color;
 }
 
-tr.unknown td {
-  background: $unknown-background-color;
+tr.pending td {
+  background: $pending-background-color;
 }
 
 .error {

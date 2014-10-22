@@ -8,6 +8,56 @@
 </head>
 <body>
   <script src="app.js"></script>
-  <script>diagnosis.run();</script>
+  <header>
+    <div class="meta">
+      <span class="status"></span>
+      <a class="export">Export Report</a>
+    </div>
+    <div class="title">
+      <span>Diagnosis</span>
+    </div>
+  </header>
+  <div class="report"></div>
+  <script class="section-template" type="text/mustache">
+    <section>
+      <h{{level}}>{{title}}</h{{level}}>
+      <div class="content"></div>
+    </section>
+  </script>
+  <script class="report-template" type="text/mustache">
+    <table>
+      <thead>
+        <tr>
+          <th class="title">Test</th>
+          <th class="result">Result</th>
+          <th class="time">Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#results}}
+          <tr class="{{#succeeded}}succeeded{{/succeeded}} {{#pending}}pending{{/pending}} {{#failed}}failed{{/failed}}">
+            <td class="title">
+              {{title}}
+            </td>
+            <td class="result">
+              {{#succeeded}}OK{{/succeeded}}
+              {{#pending}}?{{/pending}}
+              {{#failed}}Failed{{/failed}}
+            </td>
+            <td class="time">
+              {{#complete}}
+                {{time}} ms
+              {{/complete}}
+            </td>
+          </tr>
+        {{/results}}
+      </tbody>
+    </table>
+  </script>
+  <script>
+    diagnosis.run({
+      tests: ['/examples/feature1.js', '/examples/feature2.js']
+    });
+  </script>
 </body>
 </html>

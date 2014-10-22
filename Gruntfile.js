@@ -5,6 +5,7 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
   var jsSources = [
+    'bower_components/mustache/mustache.js',
     'bower_components/es6-promise/promise.js',
     'bower_components/mocha/mocha.js',
     'bower_components/chai/chai.js',
@@ -122,9 +123,7 @@ module.exports = function(grunt) {
     },
     open: {
       examples: {
-        path: 'http://localhost:8000/?' + encodeURIComponent(JSON.stringify({
-          tests: ['/examples/feature1.js', '/examples/feature2.js']
-        }))
+        path: 'http://localhost:8000/'
       }
     }
   });

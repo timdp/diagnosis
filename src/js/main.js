@@ -1,20 +1,6 @@
 (function() {
   var mainContainer = null;
 
-  var getConfigFromURL = function() {
-    var url = window.location.href;
-    var pos = url.indexOf('?');
-    if (pos < 0) {
-      return;
-    }
-    var qs = decodeURIComponent(url.substr(pos + 1));
-    var config;
-    try {
-      config = JSON.parse(qs);
-    } catch (e) {}
-    return config;
-  };
-
   var addScript = function(src) {
     return new Promise(function(resolve, reject) {
       var script = document.createElement('script');
@@ -72,26 +58,22 @@
 
       var stats = runner.stats;
 
-      var currentContainer = null;
-      var currentRow = null;
-      var level = 0;
       var startTime;
 
       var reportData = [];
+      var currentResults = null;
 
-      var metaContainer = document.createElement('div');
-      metaContainer.id = 'meta';
-      mainContainer.appendChild(metaContainer);
+      var statusText = mainContainer.querySelector('.status');
+      var exportLink = mainContainer.querySelector('.export');
+      var reportContainer = mainContainer.querySelector('.report');
+      var sections = [reportContainer];
+      var pendingResultNodes = null;
 
-      var statusText = document.createElement('span');
-      statusText.id = 'status';
-      metaContainer.appendChild(statusText);
-
-      var reportLink = document.createElement('a');
-      reportLink.id = 'export';
-      reportLink.style.display = 'none';
-      reportLink.appendChild(document.createTextNode('Export Report'));
-      metaContainer.appendChild(reportLink);
+      var templates = {};
+      ['section', 'report'].forEach(function(name) {
+        var node = mainContainer.querySelector('.' + name + '-template');
+        templates[name] = node.innerHTML;
+      });
 
       var setStatus = function(text) {
         while (statusText.firstChild) {
@@ -100,56 +82,65 @@
         statusText.appendChild(document.createTextNode(text));
       };
 
-      var createHeader = function(title, level) {
-        var prefix = '';
-        for (var i = 0; i < level; ++i) {
-          prefix += '#';
+      var createSection = function(title, level) {
+        var nodes = renderTemplate('section', {
+          title: title,
+          level: level
+        }, sections[0]);
+        var contentNode = null;
+        var i = 0;
+        while (i < nodes.length && contentNode === null) {
+          if (nodes[i].nodeType === 1) {
+            contentNode = nodes[i].querySelector('.content');
+          }
+          ++i;
         }
-        reportData.push([prefix + ' ' + title]);
-        var el = document.createElement('h' + level);
-        el.appendChild(document.createTextNode(title));
-        return el;
+        return contentNode;
       };
 
-      var createRow = function(labels, options) {
-        options = options || {};
-        var tag = options.header ? 'th' : 'td';
-        var row = document.createElement('tr');
-        for (var i = 0; i < labels.length; ++i) {
-          var cell = document.createElement(tag);
-          cell.appendChild(document.createTextNode(labels[i]));
-          row.appendChild(cell);
+      var renderResults = function() {
+        if (pendingResultNodes) {
+          pendingResultNodes.forEach(function(node) {
+            node.parentNode.removeChild(node);
+          });
         }
-        return row;
+        pendingResultNodes = renderTemplate('report', {
+          results: currentResults
+        }, sections[0]);
       };
 
-      var createContainer = function() {
-        var table = document.createElement('table');
-        var row = createRow(['Test', 'Result', 'Time'], {header: true});
-        table.appendChild(row);
-        return table;
+      var renderTemplate = function(id, data, into) {
+        var html = Mustache.render(templates[id], data);
+        var el = document.createElement('div');
+        el.innerHTML = html;
+        var clones = Array.prototype.map.call(el.childNodes, function(child) {
+          return child.cloneNode(true);
+        });
+        clones.forEach(function(cl) {
+          into.appendChild(cl);
+        });
+        return clones;
       };
 
       runner.on('suite', function(suite) {
         if (suite.root) {
           return;
         }
-        mainContainer.appendChild(createHeader(suite.title, ++level));
-        currentContainer = null;
-        currentRow = null;
+        var sectionContent = createSection(suite.title, sections.length);
+        sections.unshift(sectionContent);
+        currentResults = [];
       });
 
       runner.on('suite end', function(suite) {
         if (suite.root) {
           var csv = toCsv(reportData);
-          toDownloadLink(reportLink, 'report.csv', 'text/csv', csv);
+          toDownloadLink(exportLink, 'report.csv', 'text/csv', csv);
           statusText.style.display = 'none';
-          reportLink.style.display = 'block';
+          exportLink.style.display = 'block';
           return;
         }
-        currentContainer = null;
-        currentRow = null;
-        --level;
+        sections.shift();
+        pendingResultNodes = null;
       });
 
       runner.on('fail', function(test, err) {
@@ -160,12 +151,10 @@
 
       runner.on('test', function(test) {
         startTime = new Date();
-        if (!currentContainer) {
-          currentContainer = createContainer();
-          mainContainer.appendChild(currentContainer);
-        }
-        currentRow = createRow([test.title, '', '']);
-        currentContainer.appendChild(currentRow);
+        currentResults.push({
+          title: test.title
+        });
+        renderResults();
       });
 
       runner.on('test end', function(test) {
@@ -175,17 +164,14 @@
         var ms = new Date() - startTime;
         setStatus('Completed: ' + stats.tests + '/' + runner.total);
         //var sec = (ms / 1000).toFixed(2);
-        var result, cl;
+        var res;
         if (test.state === 'passed') {
-          result = 'OK';
-          cl = 'success';
-          reportData.push([test.title, result, ms]);
+          res = 'succeeded';
+          reportData.push([test.title, res, ms]);
         } else if (test.pending) {
-          result = '?';
-          cl = 'unknown';
+          res = 'pending';
         } else {
-          result = 'Failed';
-          cl = 'failure';
+          res = 'failed';
           var err;
           if (test.err) {
             err = {};
@@ -194,12 +180,13 @@
               err.stack = test.err.stack;
             }
           }
-          reportData.push([test.title, result, ms, err]);
+          reportData.push([test.title, res, ms, err]);
         }
-        currentRow.className = cl;
-        var cells = currentRow.childNodes;
-        cells[1].appendChild(document.createTextNode(result));
-        cells[2].appendChild(document.createTextNode(ms + ' ms'));
+        var currentResult = currentResults[currentResults.length - 1];
+        currentResult.complete = true;
+        currentResult[res] = true;
+        currentResult.time = ms;
+        renderResults();
       });
     };
   };
@@ -213,9 +200,7 @@
   };
 
   var run = function(config) {
-    if (typeof config !== 'object') {
-      config = getConfigFromURL() || {};
-    }
+    config = config || {};
     mainContainer = config.container || document.body;
     if (Array.isArray(config.tests)) {
       mocha.reporter(getReporter());
