@@ -62,7 +62,6 @@ th, td {
   padding: 0.5em;
   text-align: center;
   vertical-align: middle;
-  width: 33%;
 }
 
 th {
@@ -79,6 +78,14 @@ tr.failed td {
 
 tr.pending td {
   background: $pending-background-color;
+}
+
+th.title {
+  width: 44%;
+}
+
+th.result, th.time {
+  width: 28%;
 }
 
 .error {
