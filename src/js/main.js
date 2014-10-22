@@ -126,6 +126,11 @@
         if (suite.root) {
           return;
         }
+        var pre = '';
+        for (var i = 0; i < sections.length; ++i) {
+          pre += '#';
+        }
+        reportData.push([pre + ' ' + suite.title]);
         var sectionContent = createSection(suite.title, sections.length);
         sections.unshift(sectionContent);
         currentResults = [];
