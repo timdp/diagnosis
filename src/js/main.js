@@ -147,7 +147,9 @@
           pre += '#';
         }
         reportData.push([pre + ' ' + suite.title]);
-        console.log(pre + ' ' + suite.title);
+        if ('console' in window) {
+          console.log(pre + ' ' + suite.title);
+        }
         var sectionContent = createSection(suite.title, sections.length);
         sections.unshift(sectionContent);
         currentResults = [];
@@ -190,7 +192,9 @@
         if (test.state === 'passed') {
           res = 'succeeded';
           reportData.push([test.title, res, ms]);
-          console.log(test.title + ': succeeded');
+          if ('console' in window) {
+            console.log(test.title + ': succeeded');
+          }
         } else if (test.pending) {
           res = 'pending';
         } else {
@@ -202,9 +206,13 @@
             if (test.err.stack) {
               err.stack = test.err.stack;
             }
-            console.error(test.title + ': ' + err.message);
+            if ('console' in window) {
+              console.error(test.title + ': ' + err.message);
+            }
           } else {
-            console.error(test.title + ': Unknown error');
+            if ('console' in window) {
+              console.error(test.title + ': Unknown error');
+            }
           }
           reportData.push([test.title, res, ms, err]);
         }
