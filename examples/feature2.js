@@ -21,7 +21,7 @@
     feature('Subfeature Y', function() {
       task('Broken task', function() {
         var promise = new Promise(function(resolve, reject) {
-          reject();
+          reject(new Error('No worky'));
         });
         return expect(promise).to.eventually.have.property('foo');
       });

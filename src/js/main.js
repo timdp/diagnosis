@@ -52,13 +52,16 @@
         var win = window.open();
         var doc = win.document;
         doc.title = filename;
+        doc.body.style.height = '100%';
         doc.body.style.margin = '0';
         doc.body.style.padding = '0';
         var area = doc.createElement('textarea');
         area.value = data;
-        area.readonly = true;
+        area.readOnly = true;
         area.style.width = '100%';
         area.style.height = '100%';
+        area.style.margin = '0';
+        area.style.padding = '0';
         doc.body.appendChild(area);
         doc.close();
       };
@@ -144,6 +147,7 @@
           pre += '#';
         }
         reportData.push([pre + ' ' + suite.title]);
+        console.log(pre + ' ' + suite.title);
         var sectionContent = createSection(suite.title, sections.length);
         sections.unshift(sectionContent);
         currentResults = [];
@@ -186,6 +190,7 @@
         if (test.state === 'passed') {
           res = 'succeeded';
           reportData.push([test.title, res, ms]);
+          console.log(test.title + ': succeeded');
         } else if (test.pending) {
           res = 'pending';
         } else {
@@ -197,6 +202,9 @@
             if (test.err.stack) {
               err.stack = test.err.stack;
             }
+            console.error(test.title + ': ' + err.message);
+          } else {
+            console.error(test.title + ': Unknown error');
           }
           reportData.push([test.title, res, ms, err]);
         }

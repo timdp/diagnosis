@@ -13,6 +13,7 @@
   "undef":    true,
   "unused":   true,
   "globals": {
+    "Mustache":   false,
     "Mocha":      false,
     "mocha":      false,
     "chai":       false,
