@@ -37,18 +37,31 @@
   };
 
   var toDownloadLink = function(link, filename, mimeType, data) {
-    var blob = ('Blob' in window) ? new Blob([data]) : null;
-    if ('msSaveBlob' in navigator) {
-      link.onclick = function(e) {
-        navigator.msSaveBlob(blob, filename);
+    if ('Blob' in window && 'URL' in window &&
+        'createObjectURL' in URL) {
+      var url = URL.createObjectURL(new Blob([data], {type: mimeType}));
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+    } else if ('msSaveBlob' in navigator) {
+      link.onclick = function() {
+        navigator.msSaveBlob(new Blob([data]), filename);
         return false;
       };
     } else {
-      var url = (blob && 'URL' in window) ?
-        URL.createObjectURL(blob) :
-        'data:' + mimeType + ',' + encodeURI(data);
-      link.setAttribute('href', url);
-      link.setAttribute('download', filename);
+      link.onclick = function() {
+        var win = window.open();
+        var doc = win.document;
+        doc.title = filename;
+        doc.body.style.margin = '0';
+        doc.body.style.padding = '0';
+        var area = doc.createElement('textarea');
+        area.value = data;
+        area.readonly = true;
+        area.style.width = '100%';
+        area.style.height = '100%';
+        doc.body.appendChild(area);
+        doc.close();
+      };
     }
   };
 
