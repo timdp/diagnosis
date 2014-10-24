@@ -30,7 +30,7 @@
         <tr>
           <th class="title">Test</th>
           <th class="result">Result</th>
-          <th class="time">Time</th>
+          <th class="duration">Duration</th>
         </tr>
       </thead>
       <tbody>
@@ -44,9 +44,9 @@
               {{#pending}}?{{/pending}}
               {{#failed}}Failed{{/failed}}
             </td>
-            <td class="time">
+            <td class="duration">
               {{#complete}}
-                {{time}} ms
+                {{duration}} ms
               {{/complete}}
             </td>
           </tr>

@@ -74,8 +74,6 @@
 
       var stats = runner.stats;
 
-      var startTime;
-
       var reportData = [];
       var currentResults = null;
 
@@ -174,7 +172,6 @@
       });
 
       runner.on('test', function(test) {
-        startTime = new Date();
         currentResults.push({
           title: test.title
         });
@@ -185,18 +182,19 @@
         if (test.pending) {
           runner.emit('test', test);
         }
-        var ms = new Date() - startTime;
         setStatus('Completed: ' + stats.tests + '/' + runner.total);
-        //var sec = (ms / 1000).toFixed(2);
+        var duration = (typeof test.actualDuration !== 'undefined') ?
+          test.actualDuration : test.duration;
+        //var sec = (duration / 1000).toFixed(2);
         var res;
-        if (test.state === 'passed') {
+        if (test.pending) {
+          res = 'pending';
+        } else if (test.state === 'passed') {
           res = 'succeeded';
-          reportData.push([test.title, res, ms]);
+          reportData.push([test.title, res, duration]);
           if ('console' in window) {
             console.log(test.title + ': succeeded');
           }
-        } else if (test.pending) {
-          res = 'pending';
         } else {
           res = 'failed';
           var err;
@@ -214,12 +212,12 @@
               console.error(test.title + ': Unknown error');
             }
           }
-          reportData.push([test.title, res, ms, err]);
+          reportData.push([test.title, res, duration, err]);
         }
         var currentResult = currentResults[currentResults.length - 1];
         currentResult.complete = true;
         currentResult[res] = true;
-        currentResult.time = ms;
+        currentResult.duration = duration;
         renderResults();
       });
     };
