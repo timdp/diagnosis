@@ -1,7 +1,7 @@
 {
   "name": "diagnosis",
   "description": "Runs a series of client-side health checks",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "Tim De Pauw",
     "email": "hi@tmdpw.eu",
