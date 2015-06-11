@@ -29,10 +29,8 @@
   "bugs": {
     "url": "https://github.com/timdp/diagnosis/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://raw.githubusercontent.com/timdp/diagnosis/master/LICENSE"
-    }
-  ]
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10.0"
+  }
 }
