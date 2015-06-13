@@ -2,10 +2,9 @@
   "name": "diagnosis",
   "description": "Runs a series of client-side health checks",
   "version": "0.0.2",
-  "author": {
-    "name": "Tim De Pauw",
-    "email": "hi@tmdpw.eu",
-    "url": "http://tmdpw.eu/"
+  "author": "Tim De Pauw <hi@tmdpw.eu> (https://tmdpw.eu/)",
+  "engines": {
+    "node": ">=0.10.0"
   },
   "dependencies": {
     "grunt": "^0.4.5",
@@ -29,8 +28,5 @@
   "bugs": {
     "url": "https://github.com/timdp/diagnosis/issues"
   },
-  "license": "MIT",
-  "engines": {
-    "node": ">=0.10.0"
-  }
+  "license": "MIT"
 }
