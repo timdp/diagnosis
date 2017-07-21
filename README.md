@@ -1,7 +1,7 @@
 # Diagnosis
 
 Runs a series of client-side health checks. Basically a wrapper around
-[Mocha](http://visionmedia.github.io/mocha/) with
+[Mocha](http://mochajs.org/) with
 [Chai](http://chaijs.com/) and
 [Chai as Promised](http://chaijs.com/plugins/chai-as-promised).
 
